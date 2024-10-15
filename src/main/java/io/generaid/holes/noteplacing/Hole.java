@@ -13,26 +13,6 @@ public record Hole(String tag, BigDecimal x, BigDecimal y, BigDecimal w, BigDeci
     }
 
     @Override
-    public BigDecimal getX() {
-        return x;
-    }
-
-    @Override
-    public BigDecimal getY() {
-        return y;
-    }
-
-    @Override
-    public BigDecimal getW() {
-        return w;
-    }
-
-    @Override
-    public BigDecimal getH() {
-        return h;
-    }
-
-    @Override
     public BigDecimal getXplusW() {
         return x.add(w);
     }

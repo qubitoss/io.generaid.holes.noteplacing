@@ -10,26 +10,32 @@ public interface Area {
     }
 
     default boolean isOverlappingOnX(Area other) {
-        if (this.getXplusW().compareTo(other.getX()) > 0)
-            return this.getX().compareTo(other.getXplusW()) < 0;
+        BigDecimal thisXplusW = this.x().add(this.w());
+        BigDecimal otherXplusW = other.x().add(other.w());
+
+        if (thisXplusW.compareTo(other.x()) > 0)
+            return this.x().compareTo(otherXplusW) < 0;
         else
             return false;
     }
 
     default boolean isOverlappingOnY(Area other) {
-        if (this.getYplusH().compareTo(other.getY()) > 0)
-            return this.getY().compareTo(other.getYplusH()) < 0;
+        BigDecimal thisYplusH = this.y().add(this.h());
+        BigDecimal otherYplusH = other.y().add(other.h());
+
+        if (thisYplusH.compareTo(other.y()) > 0)
+            return this.y().compareTo(otherYplusH) < 0;
         else
             return false;
     }
 
-    BigDecimal getX();
+    BigDecimal x();
 
-    BigDecimal getY();
+    BigDecimal y();
 
-    BigDecimal getW();
+    BigDecimal w();
 
-    BigDecimal getH();
+    BigDecimal h();
 
     BigDecimal getXplusW();
 

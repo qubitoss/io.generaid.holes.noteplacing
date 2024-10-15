@@ -19,7 +19,6 @@ class AreaTest extends Specification {
 
         where:
         p1               | p2               | hasOverlap || description
-        // x, y,  w,  h
         [10, 30, 10, 10] | [30, 10, 10, 10] | false      || 'x no overlap, y no overlap'
         [10, 30, 10, 10] | [15, 10, 10, 10] | false      || 'x overlap, y no overlap'
         [10, 15, 10, 10] | [30, 10, 10, 10] | false      || 'x no overlao, y overlap'
@@ -46,18 +45,6 @@ class AreaTest extends Specification {
     }
 
     private static record AreaImpl(String tag, BigDecimal x, BigDecimal y, BigDecimal w, BigDecimal h) implements Area {
-        @Override
-        BigDecimal getX() { x }
-
-        @Override
-        BigDecimal getY() { y }
-
-        @Override
-        BigDecimal getW() { w }
-
-        @Override
-        BigDecimal getH() { h }
-
         @Override
         BigDecimal getXplusW() { x.add(w) }
 
