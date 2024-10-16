@@ -54,6 +54,42 @@ public class HolePanel {
         });
     }
 
+    public void placeNotesAgain() {
+        notes.forEach((tag, note) -> {
+            Hole hole = holes.get(tag);
+            if (hole == null)
+                return;
+
+            if (!isOverlapping(note))
+                return;
+
+            // set on right side
+            note.setX(hole.getXplusW().add(ONE));
+            note.setY(hole.getCenterY().subtract(note.h().divide(new BigDecimal(2))));
+
+            if (!isOverlapping(note))
+                return;
+
+            // set on left side
+            note.setX(hole.x().subtract(note.w()).subtract(ONE));
+            note.setY(hole.getCenterY().subtract(note.h().divide(new BigDecimal(2))));
+
+            if (!isOverlapping(note))
+                return;
+
+            // set on top
+            note.setX(hole.getCenterX().subtract(note.w().divide(new BigDecimal(2))));
+            note.setY(hole.getYplusH().add(ONE));
+
+            if (!isOverlapping(note))
+                return;
+
+            // set on bottom
+            note.setX(hole.getCenterX().subtract(note.w().divide(new BigDecimal(2))));
+            note.setY(hole.y().subtract(note.h()).subtract(ONE));
+        });
+    }
+
     private boolean isOverlapping(Area area) {
         boolean overlappsWithAHole = holes.values().stream()
                 .filter(e -> e != area)
@@ -136,7 +172,7 @@ public class HolePanel {
         return findMaxOnFunction(notes.values(), Note::h);
     }
 
-    private <T extends Area>  BigDecimal findMaxOnFunction(Collection<T> list, Function<T, BigDecimal> f) {
+    private <T extends Area> BigDecimal findMaxOnFunction(Collection<T> list, Function<T, BigDecimal> f) {
         return list.stream()
                 .max(Comparator.comparing(f))
                 .map(f)

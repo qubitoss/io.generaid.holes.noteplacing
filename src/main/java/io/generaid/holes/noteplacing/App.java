@@ -9,6 +9,8 @@ public class App {
     public void process() {
         HolePanel hp = new HolePanel(Sources.fetchHolesAsMap(), Sources.fetchNotesAsMap());
         hp.placeNotes();
+        hp.placeNotesAgain();
+//        hp.placeNotesAgain();
         hp.exportToSvg();
     }
 }
