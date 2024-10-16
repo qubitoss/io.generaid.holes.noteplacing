@@ -37,7 +37,19 @@ public interface Area {
 
     BigDecimal h();
 
-    BigDecimal getXplusW();
+    default BigDecimal getXplusW() {
+        return x().add(w());
+    }
 
-    BigDecimal getYplusH();
+    default BigDecimal getYplusH() {
+        return y().add(h());
+    }
+
+    default BigDecimal getCenterX() {
+        return x().add(w().divide(new BigDecimal(2)));
+    }
+
+    default BigDecimal getCenterY() {
+        return y().add(h().divide(new BigDecimal(2)));
+    }
 }

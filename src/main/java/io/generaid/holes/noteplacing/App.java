@@ -7,8 +7,8 @@ public class App {
     }
 
     public void process() {
-        HolePanel hp = new HolePanel();
-        hp.setHoles(HolesSource.fetchHoles());
+        HolePanel hp = new HolePanel(Sources.fetchHolesAsMap(), Sources.fetchNotesAsMap());
+        hp.placeNotes();
         hp.exportToSvg();
     }
 }

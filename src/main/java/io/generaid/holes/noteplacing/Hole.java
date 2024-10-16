@@ -11,14 +11,4 @@ public record Hole(String tag, BigDecimal x, BigDecimal y, BigDecimal w, BigDeci
                 new BigDecimal(sizeX),
                 new BigDecimal(sizeY));
     }
-
-    @Override
-    public BigDecimal getXplusW() {
-        return x.add(w);
-    }
-
-    @Override
-    public BigDecimal getYplusH() {
-        return y.add(h);
-    }
 }
