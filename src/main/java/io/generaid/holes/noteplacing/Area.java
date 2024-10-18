@@ -2,6 +2,9 @@ package io.generaid.holes.noteplacing;
 
 import java.math.BigDecimal;
 
+import static java.math.BigDecimal.TWO;
+import static java.math.MathContext.DECIMAL128;
+
 // TODO better name?
 public interface Area {
 
@@ -29,6 +32,8 @@ public interface Area {
             return false;
     }
 
+    String tag();
+
     BigDecimal x();
 
     BigDecimal y();
@@ -46,10 +51,10 @@ public interface Area {
     }
 
     default BigDecimal getCenterX() {
-        return x().add(w().divide(new BigDecimal(2)));
+        return x().add(w().divide(TWO, DECIMAL128));
     }
 
     default BigDecimal getCenterY() {
-        return y().add(h().divide(new BigDecimal(2)));
+        return y().add(h().divide(TWO, DECIMAL128));
     }
 }

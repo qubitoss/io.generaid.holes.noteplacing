@@ -22,6 +22,7 @@ public class Note implements Area {
         this.h = h;
     }
 
+    @Override
     public String tag() {
         return tag;
     }
@@ -52,5 +53,16 @@ public class Note implements Area {
     @Override
     public BigDecimal h() {
         return h;
+    }
+
+    @Override
+    public String toString() {
+        return "Note[" +
+                "tag='" + tag + '\'' +
+                ", x=" + x +
+                ", y=" + y +
+                ", w=" + w +
+                ", h=" + h +
+                ']';
     }
 }
