@@ -1,13 +1,11 @@
 package io.generaid.holes.noteplacing;
 
-import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static io.generaid.holes.noteplacing.PlacementChance.*;
-import static java.math.BigDecimal.TWO;
-import static java.math.MathContext.DECIMAL128;
+import static java.util.Comparator.comparing;
 
 public class HolePanel {
 
@@ -68,70 +66,39 @@ public class HolePanel {
 
     public void placeNotes() {
         holeWithNotes.forEach((tag, holeWithNote) -> {
-            Hole hole = holeWithNote.getHole();
             Note note = holeWithNote.getNote();
-            BigDecimal margin = holeWithNote.getMargin();
 
-            // set on right side
-            note.setX(hole.getXplusW().add(margin));
-            note.setY(hole.getCenterY().subtract(note.h().divide(TWO, DECIMAL128)));
+            Optional<PlacementArea> bestPlacement = holeWithNote.getPlacementAreas().entrySet().stream()
+                    .filter(e -> e.getValue().getPlacementChance() == EXCELLENT)
+                    .min(comparing(e -> e.getKey().getProirity()))
+                    .map(Map.Entry::getValue);
 
-            if (!isOverlapping(note))
+            if (bestPlacement.isPresent()) {
+                note.setX(bestPlacement.get().x());
+                note.setY(bestPlacement.get().y());
                 return;
+            }
 
-            // set on left side
-            note.setX(hole.x().subtract(note.w()).subtract(margin));
-            note.setY(hole.getCenterY().subtract(note.h().divide(TWO, DECIMAL128)));
+            List<PlacementArea> possiblePlacement = holeWithNote.getPlacementAreas().entrySet().stream()
+                    .filter(e -> e.getValue().getPlacementChance() == POSSIBLE)
+                    .sorted(comparing(e -> e.getKey().getProirity()))
+                    .map(Map.Entry::getValue)
+                    .toList();
 
-            if (!isOverlapping(note))
+            if (possiblePlacement.isEmpty()) {
+                System.err.println("No placement found for Note " + note.tag());
                 return;
+            }
 
-            // set on top
-            note.setX(hole.getCenterX().subtract(note.w().divide(TWO, DECIMAL128)));
-            note.setY(hole.getYplusH().add(margin));
+            for (PlacementArea placementArea : possiblePlacement) {
+                note.setX(placementArea.x());
+                note.setY(placementArea.y());
 
-            if (!isOverlapping(note))
-                return;
+                if (!isOverlapping(note))
+                    return;
+            }
 
-            // set on bottom
-            note.setX(hole.getCenterX().subtract(note.w().divide(TWO, DECIMAL128)));
-            note.setY(hole.y().subtract(note.h()).subtract(margin));
-        });
-    }
-
-    public void placeNotesAgain() {
-        holeWithNotes.forEach((tag, holeWithNote) -> {
-            Hole hole = holeWithNote.getHole();
-            Note note = holeWithNote.getNote();
-            BigDecimal margin = holeWithNote.getMargin();
-
-            if (!isOverlapping(note))
-                return;
-
-            // set on right side
-            note.setX(hole.getXplusW().add(margin));
-            note.setY(hole.getCenterY().subtract(note.h().divide(TWO, DECIMAL128)));
-
-            if (!isOverlapping(note))
-                return;
-
-            // set on left side
-            note.setX(hole.x().subtract(note.w()).subtract(margin));
-            note.setY(hole.getCenterY().subtract(note.h().divide(TWO, DECIMAL128)));
-
-            if (!isOverlapping(note))
-                return;
-
-            // set on top
-            note.setX(hole.getCenterX().subtract(note.w().divide(TWO, DECIMAL128)));
-            note.setY(hole.getYplusH().add(margin));
-
-            if (!isOverlapping(note))
-                return;
-
-            // set on bottom
-            note.setX(hole.getCenterX().subtract(note.w().divide(TWO, DECIMAL128)));
-            note.setY(hole.y().subtract(note.h()).subtract(margin));
+            System.err.println("Placement found for Note " + note.tag() + " has overlaps");
         });
     }
 

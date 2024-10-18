@@ -87,10 +87,10 @@ public class SvgExporter {
 
     private String drawHoleWithNote(HoleWithNote holeWithNote) {
         return
-//                drawRect(holeWithNote)
-                drawPlacementZones(holeWithNote)
-                        + drawArea(holeWithNote.getHole())
-                        + drawArea(holeWithNote.getNote());
+//                drawRect(holeWithNote) +
+//                drawPlacementZones(holeWithNote) +
+                        drawArea(holeWithNote.getHole()) +
+                        drawArea(holeWithNote.getNote());
     }
 
     private String drawPlacementZones(HoleWithNote holeWithNote) {
