@@ -1,9 +1,6 @@
 package io.generaid.holes.noteplacing.export.svg;
 
-import io.generaid.holes.noteplacing.Area;
-import io.generaid.holes.noteplacing.Hole;
-import io.generaid.holes.noteplacing.HoleWithNote;
-import io.generaid.holes.noteplacing.Note;
+import io.generaid.holes.noteplacing.*;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -50,6 +47,8 @@ public class SvgExporterConfiguration {
             case Hole ignored -> additionalXmlRectAttributesForHole;
             case Note ignored2 -> additionalXmlRectAttributesForNote;
             case HoleWithNote ignored3 -> additionalXmlRectAttributesForHoleWithNote;
+            // TODO parameterize
+            case PlacementArea ignored4 -> "fill-opacity='0.2'";
             default -> throw new IllegalArgumentException("Unsupported Area type: " + area.getClass().getName());
         };
     }
@@ -67,6 +66,13 @@ public class SvgExporterConfiguration {
             case Hole ignored -> holeRectColor;
             case Note ignored2 -> noteRectColor;
             case HoleWithNote ignored3 -> holeWithNoteRectColor;
+            // TODO parameterize
+            case PlacementArea placementArea -> switch (placementArea.getPlacementChance()) {
+                case EXCELLENT -> "green";
+                case POSSIBLE -> "yellow";
+                case IMPOSSIBLE -> "red"; // transparent
+                case UNKNOWN -> "grey";
+            };
             default -> throw new IllegalArgumentException("Unsupported Area type: " + area.getClass().getName());
         };
     }
@@ -97,7 +103,7 @@ public class SvgExporterConfiguration {
         private String additionalXmlTextAttributesForNote = "fill-opacity='0.4'";
         private String holeRectColor = "red";
         private String noteRectColor = "blue";
-        private String holeWithNoteRectColor = "orange";
+        private String holeWithNoteRectColor = "yellow";
         private String holeTextColor = "white";
         private String noteTextColor = "white";
 

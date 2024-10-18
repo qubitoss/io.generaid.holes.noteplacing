@@ -42,8 +42,8 @@ public class SvgExporter {
         svg.append(String.format("<g transform='translate(%s) scale(%s)'>", config.getQuadrant().getTranslate(svgWidth, svgHeight), config.getQuadrant().getScale()));
 //        svg.append("<rect width='100%' height='100%' fill='green' />");
 
-        streamHoleWithNotes().forEach(holeWithNote -> svg.append(createHoleWithNoteAsSvg(holeWithNote)));
-        streamHoleWithNotes().forEach(holeWithNote -> svg.append(createHoleWithNoteAsSvg(holeWithNote)));
+        streamHoleWithNotes().forEach(holeWithNote -> svg.append(drawHoleWithNote(holeWithNote)));
+        //streamHoleWithNotes().forEach(holeWithNote -> svg.append(createHoleWithNoteAsSvg(holeWithNote)));
 
         svg.append("</g></svg>");
 
@@ -67,11 +67,11 @@ public class SvgExporter {
     }
 
     private Stream<Hole> streamHoles() {
-        return streamHoleWithNotes().map(HoleWithNote::hole);
+        return streamHoleWithNotes().map(HoleWithNote::getHole);
     }
 
     private Stream<Note> streamNotes() {
-        return streamHoleWithNotes().map(HoleWithNote::note);
+        return streamHoleWithNotes().map(HoleWithNote::getNote);
     }
 
     private Stream<HoleWithNote> streamHoleWithNotes() {
@@ -85,23 +85,35 @@ public class SvgExporter {
                 .orElse(BigDecimal.ZERO);
     }
 
-    private String createHoleWithNoteAsSvg(HoleWithNote holeWithNote) {
-        return createSvgRect(holeWithNote)
-                + createAreaAsSvg(holeWithNote.hole())
-                + createAreaAsSvg(holeWithNote.note());
+    private String drawHoleWithNote(HoleWithNote holeWithNote) {
+        return
+//                drawRect(holeWithNote)
+                drawPlacementZones(holeWithNote)
+                        + drawArea(holeWithNote.getHole())
+                        + drawArea(holeWithNote.getNote());
     }
 
-    private String createAreaAsSvg(Area area) {
-        return createSvgRect(area) + createSvgText(area);
+    private String drawPlacementZones(HoleWithNote holeWithNote) {
+        StringBuilder placementZones = new StringBuilder();
+
+        holeWithNote.getPlacementAreas().forEach((zone, placementArea) -> {
+            placementZones.append(drawRect(placementArea));
+        });
+
+        return placementZones.toString();
     }
 
-    private String createSvgRect(Area area) {
+    private String drawArea(Area area) {
+        return drawRect(area) + drawText(area);
+    }
+
+    private String drawRect(Area area) {
         String additionalXmlRectAttributes = config.getAdditionalXmlRectAttributes(area);
         String rectColor = config.getRectColor(area);
         return String.format("<rect x='%s' y='%s' width='%s' height='%s' fill='%s' %s/>", area.x(), area.y(), area.w(), area.h(), rectColor, additionalXmlRectAttributes);
     }
 
-    private String createSvgText(Area area) {
+    private String drawText(Area area) {
         BigDecimal cx = area.x().add(area.w().divide(TWO, DECIMAL128));
         BigDecimal cy = area.y().add(area.h().divide(TWO, DECIMAL128));
         BigDecimal fontSize = area.w().min(area.h()).multiply(new BigDecimal("0.5"));

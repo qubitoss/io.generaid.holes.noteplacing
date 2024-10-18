@@ -21,14 +21,13 @@ public class App {
 //        listOverlapping(hp);
 //        hp.placeNotesAgain();
 
-//        hp.exportToSvg();
         SvgExporter.exportToSvg(hp);
     }
 
 
     private void listOverlapping(HolePanel hp) {
         hp.getAllOverlappingAreas().forEach((n, a) ->
-                System.out.println(n.tag() + ": " + a.stream().map(e -> e.tag()+":"+(e.getClass()== Hole.class?"H":"N")).toList()));
+                System.out.println(n.tag() + ": " + a.stream().map(e -> e.tag() + ":" + (e.getClass() == Hole.class ? "H" : "N")).toList()));
         System.out.println("----------------------------------");
     }
 }

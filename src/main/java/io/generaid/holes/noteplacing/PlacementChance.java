@@ -1,6 +1,6 @@
 package io.generaid.holes.noteplacing;
 
-public enum PlacementPolicy {
+public enum PlacementChance {
     EXCELLENT,
     POSSIBLE,
     IMPOSSIBLE,

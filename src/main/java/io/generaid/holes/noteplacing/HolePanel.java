@@ -1,13 +1,11 @@
 package io.generaid.holes.noteplacing;
 
 import java.math.BigDecimal;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static io.generaid.holes.noteplacing.PlacementChance.*;
 import static java.math.BigDecimal.TWO;
 import static java.math.MathContext.DECIMAL128;
 
@@ -18,7 +16,7 @@ public class HolePanel {
     public HolePanel(Map<String, Hole> holes, Map<String, Note> notes) {
         // TODO ensure that holes are not overlapping each other
         this.holeWithNotes = createHoleWithNotes(holes, notes);
-        // evaluate placement of notes
+        evaluateNotePlacements();
     }
 
     private Map<String, HoleWithNote> createHoleWithNotes(Map<String, Hole> holes, Map<String, Note> notes) {
@@ -31,6 +29,37 @@ public class HolePanel {
                 })
                 .filter(Objects::nonNull)
                 .collect(Collectors.toMap(e -> e.getHole().tag(), e -> e));
+    }
+
+    private void evaluateNotePlacements() {
+        holeWithNotes.forEach((tag, holeWithNote) -> {
+
+            holeWithNote.getPlacementAreas().forEach((zone, placementArea) -> {
+
+                for (Hole hole : streamHoles().toList()) {
+                    if (placementArea.isOverlapping(hole)) {
+                        placementArea.setPlacementChance(IMPOSSIBLE);
+                        return;
+                    }
+                }
+
+                for (HoleWithNote otherHoleWithNote : holeWithNotes.values()) {
+                    if (holeWithNote == otherHoleWithNote)
+                        continue;
+
+                    if (placementArea.isOverlapping(otherHoleWithNote)) {
+                        placementArea.setPlacementChance(POSSIBLE);
+                        // TODO calc OverlappedProportion
+                        // placementArea.setOverlappedProportion(zone, BigDecimal.ZERO);
+                        break;
+                    }
+                }
+
+                if (placementArea.getPlacementChance() == UNKNOWN) {
+                    placementArea.setPlacementChance(EXCELLENT);
+                }
+            });
+        });
     }
 
     public Map<String, HoleWithNote> getHoleWithNotes() {
@@ -129,6 +158,10 @@ public class HolePanel {
     private Stream<Area> streamAllAreas() {
         return holeWithNotes.entrySet().stream()
                 .flatMap(e -> Stream.of(e.getValue().getHole(), e.getValue().getNote()));
+    }
+
+    private Stream<Hole> streamHoles() {
+        return holeWithNotes.values().stream().map(HoleWithNote::getHole);
     }
 
     private Stream<Note> streamNotes() {

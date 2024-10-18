@@ -1,6 +1,6 @@
 package io.generaid.holes.noteplacing;
 
-public enum PlacementPlace {
+public enum PlacementZone {
     NORTH,
     NORTH_EAST,
     EAST,
